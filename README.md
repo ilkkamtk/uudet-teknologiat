@@ -1,12 +1,16 @@
 # TX00EY74 Uudet teknologiat
 
-## TOC
-- Viikko 1 - 4, Desktop Apps with Hybrid Technologies
-   - React Native for Windows + macOS
-   - Tauri
-   - Google MediaPipe
-   - TensorFlow Lite ?
-   - face-api.js ?
-- Viikko 5 - ?, 3D Graphics with Web Technologies
-   - React Three Fiber
-   - Gaussian splatting
+### Desktop Apps With Hybrid Technologies
+
+1. React Native for Windows + macOS
+2. Tauri
+
+### Local AI
+1. Google MediaPipe
+2. face-api.js
+
+### 3D Web
+1. React Three Fiber
+2. Gaussian splatting
+3. WebGPU
+
