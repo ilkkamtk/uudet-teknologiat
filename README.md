@@ -2,8 +2,8 @@
 
 ### Desktop Apps With Hybrid Technologies
 
-1. React Native for Windows + macOS
-2. Tauri
+1. [React Native for Windows + macOS](https://github.com/birdofpreyru/react-native-fs)
+2. [Tauri](tauri.md)
 
 ### Local AI
 1. Google MediaPipe
