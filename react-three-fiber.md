@@ -26,10 +26,12 @@ React Three Fiber (R3F) is a React renderer for Three.js. It allows you to build
    - Here’s a simple example to render a rotating cube:
 
     ```tsx
-    import { Canvas, useFrame } from '@react-three/fiber';
+    import { Canvas, ThreeElements, useFrame } from "@react-three/fiber";
+    import { useRef } from "react";
+    import "./Home.css";
     
-    function RotatingCube() {
-      const ref = React.useRef();
+    const RotatingCube = () => {
+      const ref = useRef<ThreeElements["mesh"]>();
     
       useFrame(() => {
         if (ref.current) {
@@ -44,17 +46,22 @@ React Three Fiber (R3F) is a React renderer for Three.js. It allows you to build
           <meshStandardMaterial color="orange" />
         </mesh>
       );
-    }
+    };
     
-    export default function App() {
+    const Home = () => {
       return (
-        <Canvas>
-          <ambientLight />
-          <pointLight position={[10, 10, 10]} />
-          <RotatingCube />
-        </Canvas>
+        <section className="three-canvas">
+          <Canvas>
+            <ambientLight />
+            <pointLight position={[10, 10, 10]} />
+            <RotatingCube />
+          </Canvas>
+        </section>
       );
-    }
+    };
+    
+    export default Home;
+
     ```
 
    - **Key Points:**
