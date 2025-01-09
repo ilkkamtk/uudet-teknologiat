@@ -6,8 +6,8 @@
 2. [Tauri](tauri.md)
 
 ### Local AI
-1. Google MediaPipe
-2. face-api.js
+1. [Google MediaPipe](mediapipe.md)
+2. [face-api.js](mediapipe.md)
 
 ### 3D Web
 1. React Three Fiber
