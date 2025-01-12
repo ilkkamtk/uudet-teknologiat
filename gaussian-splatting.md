@@ -1,6 +1,6 @@
 # Gaussian Splatting
 
-<iframe width="560" height="315" src="https://projects.markkellogg.org/threejs/gaussian_splats_3d_demos/truck.html?mode=0" frameborder = "0" allowfullscreen></iframe>
+[Example](https://projects.markkellogg.org/threejs/gaussian_splats_3d_demos/truck.html?mode=0)
 
 Gaussian splatting is a novel technique for rendering 3D scenes using continuous 3D Gaussians instead of traditional mesh-based geometry. This method is particularly useful for rendering point clouds, volumetric data, and other complex 3D structures.
 
