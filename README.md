@@ -10,7 +10,7 @@
 2. [face-api.js](mediapipe.md)
 
 ### 3D Web
-1. React Three Fiber
+1. [React Three Fiber](react-three-fiber.md)
 2. Gaussian splatting
 3. WebGPU
 
