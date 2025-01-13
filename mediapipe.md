@@ -212,7 +212,7 @@ and facial landmark detection.
     ```bash
     npm i face-api.js
     ```
-2. Load Model(s) [from the repository](https://github.com/justadudewhohacks/face-api.js/tree/master/weights) and save to `assets/models`.
+2. Load Model (tiny_face_detector_model-shard1, tiny_face_detector_model-weights_manifest.json) [from the repository](https://github.com/justadudewhohacks/face-api.js/tree/master/weights) and save to `public/models`.
 3. Example Code:
     ```typescript
     import React, { useEffect, useRef, useState } from 'react';
