@@ -11,6 +11,6 @@
 
 ### 3D Web
 1. [React Three Fiber](react-three-fiber.md)
-2. Gaussian splatting
-3. WebGPU
+2. [NeRF and Gaussian splatting](gaussian-splatting.md)
+3. [Babylon.js](https://doc.babylonjs.com/)
 
