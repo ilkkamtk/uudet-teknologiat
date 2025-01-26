@@ -80,6 +80,9 @@ Gaussian splatting shares similarities with Neural Radiance Fields (NeRF) in usi
 ### Gaussian Splatting
 - https://www.youtube.com/watch?v=Xn4h0vJ-wYQ
 - https://www.youtube.com/watch?v=ERuRMOVO58Q
-- https://www.jawset.com/
+- https://www.jawset.com/ - postshot, generate splats from images or videos (Windows)
+   - Installed in Media Lab, Unreal computer 
+- [Supersplat](https://playcanvas.com/supersplat/editor/) - Gaussian Splat editor
 - https://github.com/mkkellogg/GaussianSplats3D
 - https://github.com/vincent-lecrubier-skydio/react-three-fiber-gaussian-splat
+- [Splat embedded with Babylon.js](https://users.metropolia.fi/~ilkkamtk/babylon/)

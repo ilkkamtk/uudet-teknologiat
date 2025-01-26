@@ -151,3 +151,7 @@ Create a simple 3D UI using React Three Fiber:
    - Implement a click event to toggle button states.
    - Add lighting and shadows for a realistic look.
 3. You can create the control panel design using simple geometries and materials or import 3D models.
+
+
+## Examples
+- [Dynamically created 3D city](https://github.com/ilkkamtk/3d-city) ([Demo](https://users.metropolia.fi/~ilkkamtk/city/))
