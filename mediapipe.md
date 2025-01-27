@@ -92,7 +92,8 @@ MediaPipe Suite includes:
     - Add the MediaPipe library to your project using npm: `npm install @mediapipe/tasks-vision`
     - Load
       the [MediaPipe model](https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task)
-      for the desired task and save to `assets/models`.
+      for the desired task and save to `public/models`.
+    - Load [WASM files](wasm.zip), extract to `public/wasm`
 2. Example Code:
     ```typescript
     import React, { useEffect, useRef, useState } from 'react';
