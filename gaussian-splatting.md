@@ -84,3 +84,4 @@ Gaussian splatting shares similarities with Neural Radiance Fields (NeRF) in usi
 - https://github.com/mkkellogg/GaussianSplats3D
 - https://github.com/vincent-lecrubier-skydio/react-three-fiber-gaussian-splat
 - [Splat embedded with Babylon.js](https://users.metropolia.fi/~ilkkamtk/babylon/)
+   - [Source code](https://github.com/ilkkamtk/babylon-splat)
