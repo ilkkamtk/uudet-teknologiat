@@ -29,8 +29,6 @@ NeRF uses **volume rendering techniques** to synthesize images by integrating th
 
 ---
 
-Let me know if you’d like a deeper dive into the math behind NeRF, or if you need this formatted for slides or presentations!
-
 
 
 ## Gaussian Splatting
