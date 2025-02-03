@@ -12,5 +12,6 @@
 ### 3D Web
 1. [React Three Fiber](react-three-fiber.md)
 2. [NeRF and Gaussian splatting](gaussian-splatting.md)
-3. [Babylon.js](https://doc.babylonjs.com/)
+3. [Babylon.js](https://github.com/BabylonJS/Babylon.js)
+      - [Dokumentaatio](https://doc.babylonjs.com/)
 
