@@ -17,7 +17,7 @@ React Three Fiber (R3F) is a React renderer for Three.js. It allows you to build
     - Start a new React project using Vite.
     - Vite just updated to React 19 which is not yet supported by R3F. Use React 18 for now. After `npm create vite@latest`:
     ```bash
-   npm install react@18 react-dom@18
+   npm install react@18 react-dom@18 @types/react@18 @types/react-dom@18
    ```
 
 2. **Setup**
