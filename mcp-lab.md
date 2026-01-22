@@ -314,12 +314,11 @@ export { notFound, errorHandler };
    import express from 'express';
 
    const router = express.Router();
-
-   router
-   .route('/').get(req: express.Request, res: express.Response) => {
-     res.json({ message: 'MCP Client Endpoint in the future' });
+   
+   router.route('/').get((req: express.Request, res: express.Response) => {
+      res.json({ message: 'MCP Client Endpoint in the future' });
    });
-
+   
    export default router;
    ```
 
