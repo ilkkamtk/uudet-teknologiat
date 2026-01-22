@@ -316,7 +316,7 @@ export { notFound, errorHandler };
    const router = express.Router();
 
    router
-   .route('/'), (req: express.Request, res: express.Response) => {
+   .route('/').get(req: express.Request, res: express.Response) => {
      res.json({ message: 'MCP Client Endpoint in the future' });
    });
 
