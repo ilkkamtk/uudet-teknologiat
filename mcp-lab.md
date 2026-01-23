@@ -98,7 +98,7 @@ For local development you can run a minimal Radicale CalDAV server with no authe
    - Add a calendar with the + button
    - Subscribe to it in your calendar app (e.g., macOS Calendar, Thunderbird, etc.)
 
-5. Dont close the Radicale terminal, keep it running in the background.
+5. Don't close the Radicale terminal, keep it running in the background.
 
 ---
 
@@ -159,7 +159,7 @@ Implement MCP server tools that use the calendar client to list and create event
 
 2. Create new file `src/mcp-server/index.ts`.
 
-3. Create first tool schema for creating calendar event to `src/mcp-server/index.ts`:
+3. Create the first tool schema for creating calendar event in `src/mcp-server/index.ts`:
 
    ```typescript
    import { z } from 'zod';
