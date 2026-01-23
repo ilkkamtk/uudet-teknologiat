@@ -133,7 +133,7 @@ Create a [CalDAV](https://en.wikipedia.org/wiki/CalDAV) client that can communic
 
 There are several JavaScript/TypeScript libraries for CalDAV. Here we use [tsdav](https://www.npmjs.com/package/tsdav).
 
-1. Open `src/calendarClient.ts` and implement the calendar client by filling in the TODOs.
+1. Open `src/calDav/calendarClient.ts` and implement the calendar client by filling in the TODOs.
 2. Test the calendar client by running:
 
    ```bash
@@ -157,9 +157,9 @@ Implement MCP server tools that use the calendar client to list and create event
    - [New version should be released in Q1 of 2026](https://github.com/modelcontextprotocol/typescript-sdk?tab=readme-ov-file#mcp-typescript-sdk).
    - Zod is used to define and validate tool input/output schemas.
 
-2. Create new file `src/mcp-server/index.ts`:
+2. Create new file `src/mcp-server/index.ts`.
 
-3. Create first tool schema for creating calendar event:
+3. Create first tool schema for creating calendar event to `src/mcp-server/index.ts`:
 
    ```typescript
    import { z } from 'zod';
@@ -189,9 +189,11 @@ Implement MCP server tools that use the calendar client to list and create event
    type CreateEventInput = z.infer<typeof createEventInputSchema>;
    ```
 
-4. Implement the create event tool:
+4. Implement the create event tool. Add the following to `src/mcp-server/index.ts`:
 
    ```typescript
+   import { createEvent, getEventByUrl } from '@/calDav/calendarClient';
+   import { icsToJson } from '@/utils/ics-to-json';
    import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
    const mcpServer = new McpServer({
@@ -290,7 +292,7 @@ Implement MCP server tools that use the calendar client to list and create event
      - Streamable HTTP for remote/web based servers (like Express)
      - STDIO for local/CLI based servers running as subprocesses.
 
-6. Chaeck if MCP server is offering the tools correctly with MCP inspector:
+6. Check if MCP server is offering the tools correctly with MCP inspector:
 
    ```bash
    npx @modelcontextprotocol/inspector
