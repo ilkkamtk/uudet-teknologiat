@@ -286,7 +286,9 @@ Implement MCP server tools that use the calendar client to list and create event
    export { postMcp };
    ```
 
-   - There are two ways to expose MCP servers: Streamable HTTP for remote/web based servers (like Express) and STDIO for local/CLI based servers running as subprocesses.
+   - There are two ways to expose MCP servers:
+     - Streamable HTTP for remote/web based servers (like Express)
+     - STDIO for local/CLI based servers running as subprocesses.
 
 6. Chaeck if MCP server is offering the tools correctly with MCP inspector:
 
