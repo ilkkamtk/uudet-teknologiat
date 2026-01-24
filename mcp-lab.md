@@ -393,6 +393,7 @@ Quick check: `npm run build` (this should catch most typing issues immediately).
 “Improve the `messages` setup in index.ts:
 
 - Add a detailed system message that makes the assistant behave like a calendar assistant.
+- LLM does not know the current date/time; Add it to the messages as ISOString.
 - It must prefer using MCP tools for calendar actions:
   - If the user wants to list events → call `listEvents`.
   - If the user wants to create an event → call `createEvent`.
