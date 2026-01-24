@@ -147,6 +147,8 @@ There are several JavaScript/TypeScript libraries for CalDAV. Here we use [tsdav
 
 Implement MCP server tools that use the calendar client to list and create events.
 
+### Create event tool
+
 1. Install [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk/tree/v1.x?tab=readme-ov-file#overview) and [Zod](https://github.com/colinhacks/zod?tab=readme-ov-file#what-is-zod) libraries:
 
    ```bash
@@ -302,6 +304,19 @@ Implement MCP server tools that use the calendar client to list and create event
    - Use `http://localhost:3000/api/v1/mcp` as MCP server URL.
    - Open command palette (Ctrl+Shift+P or Cmd+Shift+P) and type "MCP: Add Server".
    - Choose "Add MCP Server" and enter the URL.
-   - In agent mode, try commands like "Create a calendar event titled 'Team Meeting' on [date] at [time]"
+   - In agent mode, try commands like "Create a calendar event titled 'Team Meeting' on [date] at [time]". _Note that MMLs don't know what time it is, so if you say `tomorrow` or `next week`, you need to tell what day it is today in the same prompt_.
    - Check Radicale calendar to see if event was created.
    - Use the delete tests with `npm test` to clean up events.
+
+### List events tool
+
+1. Use similar steps as with create event tool to implement list events tool.
+   - Define tool schema for listing events. In this case inputSchema is and empty object `{}` since no input is needed.
+   - Implement the tool `listEvents` using calendar client to fetch events.
+     - mind the `description` property to clearly explain what the tool does.
+
+2. Test the list events tool via MCP inspector and VSCode Copilot.
+   - Use commands like "List all calendar events for today".
+   - Verify the listed events match those in Radicale calendar.
+
+3. Ensure both tools (create and list events) work correctly together by trying to create an event to a time already occupied by another event and see how the model handles it.
