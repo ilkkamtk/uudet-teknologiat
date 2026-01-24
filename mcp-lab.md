@@ -323,89 +323,250 @@ Implement MCP server tools that use the calendar client to list and create event
 
 ## MCP client endpoint
 
-Implement MCP client endpoint that can send user prompts to a chat model and use the MCP server tools.
+Implement an MCP client endpoint that accepts a JSON prompt, sends it to a chat model (via an OpenAI-compatible proxy), and lets the model call your MCP server tools (`createEvent`, `listEvents`) over MCP Streamable HTTP. The endpoint should be usable from Postman.
 
-Here are the steps to implement the MCP client endpoint. You can write the code yourself or use the instructions in VS Code Copilot Agent mode.
+### Using AI Agent (VSCode Copilot Agent)
 
-### Add the route
+Scroll down for code-it-yourself instructions.
 
-Create an Express router for the MCP client endpoint.
+Use the instructions below VSCode's Copilot Agent to generate the code for you step-by-step.
 
-- Create mcpClientRouter.ts
-- Use the same style as the existing MCP server router.
-- Define `POST /` that calls a controller function named `postPrompt`.
-- Default export the router.
-- Keep imports consistent with the project (relative import to controller).”
+Paste these into Copilot **Agent mode** one at a time.
 
 ---
 
-### Add the controller (validate input + call client)
+#### Prompt 1 — Add a new `/client` API endpoint (router + mount)
 
-Create the controller for the MCP client endpoint.
+“Add an MCP client HTTP endpoint under the existing v1 API.
 
-- Create mcpClientController.ts
-- Implement `postPrompt(req, res, next)`:
-  - Expect JSON body `{ prompt: string }`
-  - If missing/invalid, respond `400` with `{ error: 'Invalid prompt' }`
-  - Call `runPromptWithMcpServer(prompt)` from the MCP client module and return its result as JSON
-  - Wrap errors with `next(new CustomError(message, 500))`
-- Match patterns used in the existing controllers (Express types, `CustomError` usage).
+- Create a new router file at mcpClientRouter.ts.
+- Mount it under `/api/v1/client` in index.ts (follow the same style as how `/mcp` is mounted).
+- Keep code style consistent with the other routers in this project.”
+
+Quick check: run `npm run build`.
+
+---
+
+#### Prompt 2 — Add the controller for Postman JSON requests
+
+“Implement the controller used by the `/api/v1/client` route.
+
+- Create mcpClientController.ts.
+- This endpoint must accept JSON like `{ "prompt": "..." }`.
+- Validate the request body and return `400` with a small JSON error if it’s missing/invalid.
+- On success, call the MCP client module (we’ll implement it next) and return its result as JSON.
+- Use the same error handling approach as the other controllers (CustomError + next()).”
+
+Quick check: start `npm run dev` and confirm `POST /api/v1/client` with `{}` returns 400.
+
+---
+
+#### Prompt 3 — Create the MCP client module skeleton (env + connect)
+
+“Create an MCP client module that can call our MCP server over Streamable HTTP.
+
+- Create index.ts.
+- Add a function that takes a user prompt string and returns `{ answer, toolCalls }`.
+- Read required env vars (`MCP_SERVER_URL`, `OPENAI_PROXY_URL`) and fail fast with clear errors when missing.
+- Connect to the MCP server using the MCP SDK Streamable HTTP client transport.
+- Make sure the transport is always closed even on errors.”
+
+Quick check: `npm run build`.
+
+---
+
+#### Prompt 4 — Call the chat completions endpoint via `fetchData` (typed, no `any`)
+
+“Extend index.ts so it calls the chat completions endpoint on our proxy:
+
+- Use the existing helper in fetchData.ts to POST to `${OPENAI_PROXY_URL}/v1/chat/completions`.
+- Keep TypeScript strict: avoid `any` in this module.
+- Don’t rely on OpenAI SDK type imports (they’re fragile across versions); instead, define the minimal response/request/message types we actually use inside this file.
+- Accept `OPENAI_MODEL` env var with a sensible default.”
+
+Quick check: `npm run build` (this should catch most typing issues immediately).
+
+---
+
+#### Prompt 5 — Add a strong system prompt for Finnish calendar commands (tool-first)
+
+“Improve the `messages` setup in index.ts:
+
+- Add a detailed system message that makes the assistant behave like a Finnish calendar assistant.
+- It must prefer using MCP tools for calendar actions:
+  - If the user wants to list events → call `listEvents`.
+  - If the user wants to create an event → call `createEvent`.
+- It must interpret Finnish phrases like ‘ensi keskiviikko’, ‘huomenna’, ‘kello 17’, and ‘Helsingissä’.
+- It must convert Europe/Helsinki local intent into UTC ISO 8601 strings for the `createEvent` tool inputs.
+- Default event duration to 1 hour if end time isn’t given.
+- After tool calls, the assistant’s final answer must be based only on tool output (no pretending success).”
+
+Quick check: none yet—this is behavior-focused.
+
+---
+
+#### Prompt 6 — Implement the tool-calling loop (multi-round)
+
+“Implement tool calling in index.ts:
+
+- Fetch tool definitions from the MCP server with `mcpClient.listTools()` and expose them to chat completions as function tools.
+- Run a multi-round loop with a max round limit to prevent infinite tool calls.
+- If the model returns tool calls:
+  - Parse tool arguments safely (handle invalid JSON gracefully).
+  - Call the MCP tool using `mcpClient.callTool(...)`.
+  - Convert the tool result into a string and append it back to the message history as a tool message.
+  - Count tool calls.
+- If the model returns no tool calls, return the final assistant content as `{ answer, toolCalls }`.
+- Keep this module strictly typed end-to-end (no `any`).”
+
+Quick check: `npm run build`.
+
+---
+
+#### Prompt 7 — Wire controller to the client module cleanly
+
+“Update mcpClientController.ts to call the MCP client function you implemented and return `{ answer, toolCalls }` exactly.
+
+- Keep validation and error handling simple and consistent with the rest of the API.”
+
+Quick check: `npm run build` + `npm run dev`.
+
+---
+
+#### Prompt 8 — Postman test + small polish pass
+
+“Do a small polish pass for real Postman usage:
+
+- Confirm `POST /api/v1/client` accepts `{ "prompt": "Lisää ensi keskiviikolle illallinen helsingissä kello 17" }`.
+- Response should be JSON `{ answer: string, toolCalls: number }`.
+- Ensure error cases are readable (missing env vars, bad body, proxy down) and don’t leak huge stacks in production mode.”
+
+Manual Postman test:
+
+- URL `http://localhost:3000/api/v1/client`
+- Method `POST`
+- Header `Content-Type: application/json`
+- Body `{ "prompt": "Lisää ensi keskiviikolle illallinen helsingissä kello 17" }`
+
+---
+
+## Code-it-yourself instructions
+
+Step-by-step instructions to implement the MCP client endpoint yourself.
+
+### 1) Add the route
+
+Goal: create `POST /api/v1/client`.
+
+- “Create mcpClientRouter.ts.
+  - Use Express Router.
+  - Add `router.post('/', postPrompt)`.
+  - Import `postPrompt` from `../controllers/mcpClientController`.
+  - Default-export the router.”
+
+---
+
+### 2) Add the controller (validate input + call MCP client)
+
+Goal: validate `{ prompt }`, call the MCP client module, and return JSON.
+
+- “Create mcpClientController.ts.
+  - Implement `postPrompt` as `async (req: Request<unknown, unknown, { prompt: string }>, res: Response, next: NextFunction)`.
+  - Read `prompt` from `req.body`.
+  - If `prompt` is missing or not a string, respond `400` with `{ error: 'Invalid prompt' }`.
+  - Call `runPromptWithMcpServer(prompt)` from `@/mcp-client` and `return res.json(result)`.
+  - On errors: `next(new CustomError((error as Error).message, 500))`.”
 
 Verification:
 
-- “Start dev server with `npm run dev` and confirm `POST /api/v1/client` returns 400 when body is empty.”
+- Start dev server with `npm run dev`.
+- Send an empty JSON body to `POST /api/v1/client` and confirm you get `400`.
 
 ---
 
-### Scaffold the MCP client module (env vars + connect to MCP server)
+### 3) Implement the MCP client module (strong types, no OpenAI SDK types)
 
-Create the MCP client module that can talk to the local MCP server over Streamable HTTP.
+Goal: create a tool-calling loop without `any` and without relying on OpenAI SDK type imports.
 
-- Create src/mcp-client/index.ts
-- Export an async function `runPromptWithMcpServer(prompt: string)` returning `{ answer: string; toolCalls: number }`
-- Read env vars:
-  - `MCP_SERVER_URL` (required) e.g. `http://localhost:3000/api/v1/mcp`
-  - `OPENAI_PROXY_URL` (required) base URL that serves `/v1/chat/completions`
-  - `OPENAI_MODEL` (optional default like `gpt-4o`)
-- Create an MCP `Client` and connect with `StreamableHTTPClientTransport` to `MCP_SERVER_URL`
-- Make sure transport is always closed in a `finally` block.
-
----
-
-### Implement the tool-calling loop (Chat Completions → MCP tools)
-
-Extend src/mcp-client/index.ts to implement an iterative tool-calling loop:
-
-- Use `mcpClient.listTools()` to fetch tool definitions and convert them to OpenAI ‘function tool’ format.
-- Call `${OPENAI_PROXY_URL}/v1/chat/completions` using the existing `fetchData` helper from fetchData.ts. The return type should match `ChatCompletion` from `openai` package.
-- Provide `messages` with:
-  - a `system` instruction that:
-    - says the assistant must use tools to fulfill calendar actions
-    - allows the model to produce ISO 8601 UTC datetimes for tool inputs (since the server tool schema requires ISO strings)
-  - the user prompt
-- Implement `MAX_ROUNDS` (e.g. 10):
-  - If the model returns tool calls, parse JSON arguments, call `mcpClient.callTool`, append tool results back into `messages`
-  - Track a `toolCallsCount`
-  - If the model returns no tool calls, return `{ answer: message.content ?? '', toolCalls: toolCallsCount }`
-- Be defensive:
-  - Handle invalid JSON arguments for tool calls by returning a tool-message error string
-  - Handle errors from `callTool` similarly
-- Keep types compatible with `openai` package types (`ChatCompletion`, `ChatCompletionMessageParam`).”
-
-Verification:
-
-- “Send a simple prompt like `List my events` to `POST /api/v1/client`.”
+- “Create index.ts exporting:
+  - `runPromptWithMcpServer(prompt: string): Promise<{ answer: string; toolCalls: number }>`
+  - Read env vars and throw if missing:
+    - `MCP_SERVER_URL`
+    - `OPENAI_PROXY_URL`
+    - `OPENAI_MODEL` (optional, default `gpt-4o`)
+  - Connect to MCP server using `StreamableHTTPClientTransport` + `Client`.
+  - Always close the transport in a `finally` block.
+  - Do NOT import OpenAI SDK types. Instead, define minimal local TS types:
+    - `ChatRole = 'system' | 'user' | 'assistant' | 'tool'`
+    - `ToolCall` for `{ id, type: 'function', function: { name: string; arguments: string } }`
+    - `ChatMessageParam` union:
+      - system/user/assistant messages with `content: string | null` and optional `tool_calls?: ToolCall[]`
+      - tool messages with `tool_call_id: string` and `content: string`
+    - `ChatCompletionResponse` with `choices: Array<{ message: ... }>`
+    - `ChatCompletionRequest` with `model`, `messages`, optional `tools`, `tool_choice`
+  - Use `fetchData<ChatCompletionResponse>(\`\${OPENAI_PROXY_URL}/v1/chat/completions\`, ...)`so the response is typed (no`any`).”
 
 ---
 
-### Postman-ready behavior + response shape
+### 4) Add the system prompt (detailed + matches your actual tools)
 
-“Make sure the HTTP endpoint is pleasant for Postman testing:
+Goal: make the model reliably call `createEvent` / `listEvents`, and produce ISO datetimes for tool args.
 
-- Confirm `POST /api/v1/client` responds JSON like:
+- “In index.ts, build `messages: ChatMessageParam[]` starting with a detailed `system` message and then `{ role: 'user', content: prompt }`.
+  The system message must instruct:
+  - You are a calendar assistant for Finnish user requests.
+  - Tools available: `createEvent` and `listEvents`.
+  - Tool usage rules:
+    - For listing requests → call `listEvents` first.
+    - For creating requests → call `createEvent`.
+    - You must use tools for calendar actions (don’t ‘pretend’).
+  - Date/time handling:
+    - Interpret phrases: ‘next week’, ‘this friday’, ‘tomorrow’, ‘at 17’, etc.
+    - Assume user times are Europe/Helsinki local time.
+    - Convert to UTC ISO 8601 strings for `createEvent.start` and `createEvent.end`.
+    - If end time not given → default duration 1 hour.
+  - Field mapping:
+    - `title`: short (e.g. ‘Dinner’)
+    - `location`: set if a place is mentioned (e.g. Helsinki)
+    - `description`: optional extra details
+  - After tool results:
+    - Reply briefly based strictly on tool output.
+    - Do not claim success unless tool output confirms it.”
+
+---
+
+### 5) Implement the tool-calling loop (MAX_ROUNDS, defensive parsing, typed messages)
+
+Goal: iterate until the model stops requesting tools.
+
+- “In index.ts, implement:
+  - `const { tools } = await mcpClient.listTools()` and map to OpenAI function-tools:
+    - `type OpenAIFunctionTool = { type: 'function'; function: { name: string; description?: string; parameters: unknown } }`
+  - `MAX_ROUNDS = 10`
+  - Loop:
+    1. Call chat completions with `{ model, messages, tools, tool_choice: 'auto' }`
+    2. Push the assistant message into `messages` (typed)
+    3. If no `tool_calls`, return `{ answer: message.content ?? '', toolCalls: toolCallsCount }`
+    4. For each tool call:
+       - Parse `call.function.arguments`:
+         - parse to `unknown`
+         - if it’s an object use it as `Record<string, unknown>`, otherwise use `{}` and return a tool error message
+       - Call `mcpClient.callTool({ name: call.function.name, arguments })`
+       - Convert MCP tool result into a single string (join `text` parts + stringify `structuredContent` if present)
+       - Push a tool message `{ role: 'tool', tool_call_id: call.id, content: '...' }` into `messages`
+  - Keep a `toolCallsCount` number.
+  - Avoid returning `null` from the tool call map (keep arrays strongly typed).”
+
+---
+
+### 6) Postman-ready behavior + response shape
+
+Goal: simple JSON response for testing.
+
+- `POST /api/v1/client` responds:
   - `{ "answer": "...", "toolCalls": 2 }`
-- Ensure invalid body returns `{ "error": "Invalid prompt" }` with status 400.
-- Don’t add extra wrappers or nested fields unless necessary.”
+- Invalid body responds:
+  - status `400`, `{ "error": "Invalid prompt" }`
 
 Verification (Postman):
 
@@ -417,7 +578,3 @@ Verification (Postman):
   ```json
   { "prompt": "Lisää ensi keskiviikolle illallinen helsingissä kello 17" }
   ```
-
-- Expect: tool calls happen, and you get a final natural-language `answer` plus `toolCalls`.
-
----
