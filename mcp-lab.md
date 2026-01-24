@@ -320,3 +320,104 @@ Implement MCP server tools that use the calendar client to list and create event
    - Verify the listed events match those in Radicale calendar.
 
 3. Ensure both tools (create and list events) work correctly together by trying to create an event to a time already occupied by another event and see how the model handles it.
+
+## MCP client endpoint
+
+Implement MCP client endpoint that can send user prompts to a chat model and use the MCP server tools.
+
+Here are the steps to implement the MCP client endpoint. You can write the code yourself or use the instructions in VS Code Copilot Agent mode.
+
+### Add the route
+
+Create an Express router for the MCP client endpoint.
+
+- Create mcpClientRouter.ts
+- Use the same style as the existing MCP server router.
+- Define `POST /` that calls a controller function named `postPrompt`.
+- Default export the router.
+- Keep imports consistent with the project (relative import to controller).”
+
+---
+
+### Add the controller (validate input + call client)
+
+Create the controller for the MCP client endpoint.
+
+- Create mcpClientController.ts
+- Implement `postPrompt(req, res, next)`:
+  - Expect JSON body `{ prompt: string }`
+  - If missing/invalid, respond `400` with `{ error: 'Invalid prompt' }`
+  - Call `runPromptWithMcpServer(prompt)` from the MCP client module and return its result as JSON
+  - Wrap errors with `next(new CustomError(message, 500))`
+- Match patterns used in the existing controllers (Express types, `CustomError` usage).
+
+Verification:
+
+- “Start dev server with `npm run dev` and confirm `POST /api/v1/client` returns 400 when body is empty.”
+
+---
+
+### Scaffold the MCP client module (env vars + connect to MCP server)
+
+Create the MCP client module that can talk to the local MCP server over Streamable HTTP.
+
+- Create src/mcp-client/index.ts
+- Export an async function `runPromptWithMcpServer(prompt: string)` returning `{ answer: string; toolCalls: number }`
+- Read env vars:
+  - `MCP_SERVER_URL` (required) e.g. `http://localhost:3000/api/v1/mcp`
+  - `OPENAI_PROXY_URL` (required) base URL that serves `/v1/chat/completions`
+  - `OPENAI_MODEL` (optional default like `gpt-4o`)
+- Create an MCP `Client` and connect with `StreamableHTTPClientTransport` to `MCP_SERVER_URL`
+- Make sure transport is always closed in a `finally` block.
+
+---
+
+### Implement the tool-calling loop (Chat Completions → MCP tools)
+
+Extend src/mcp-client/index.ts to implement an iterative tool-calling loop:
+
+- Use `mcpClient.listTools()` to fetch tool definitions and convert them to OpenAI ‘function tool’ format.
+- Call `${OPENAI_PROXY_URL}/v1/chat/completions` using the existing `fetchData` helper from fetchData.ts. The return type should match `ChatCompletion` from `openai` package.
+- Provide `messages` with:
+  - a `system` instruction that:
+    - says the assistant must use tools to fulfill calendar actions
+    - allows the model to produce ISO 8601 UTC datetimes for tool inputs (since the server tool schema requires ISO strings)
+  - the user prompt
+- Implement `MAX_ROUNDS` (e.g. 10):
+  - If the model returns tool calls, parse JSON arguments, call `mcpClient.callTool`, append tool results back into `messages`
+  - Track a `toolCallsCount`
+  - If the model returns no tool calls, return `{ answer: message.content ?? '', toolCalls: toolCallsCount }`
+- Be defensive:
+  - Handle invalid JSON arguments for tool calls by returning a tool-message error string
+  - Handle errors from `callTool` similarly
+- Keep types compatible with `openai` package types (`ChatCompletion`, `ChatCompletionMessageParam`).”
+
+Verification:
+
+- “Send a simple prompt like `List my events` to `POST /api/v1/client`.”
+
+---
+
+### Postman-ready behavior + response shape
+
+“Make sure the HTTP endpoint is pleasant for Postman testing:
+
+- Confirm `POST /api/v1/client` responds JSON like:
+  - `{ "answer": "...", "toolCalls": 2 }`
+- Ensure invalid body returns `{ "error": "Invalid prompt" }` with status 400.
+- Don’t add extra wrappers or nested fields unless necessary.”
+
+Verification (Postman):
+
+- URL: `http://localhost:3000/api/v1/client`
+- Method: `POST`
+- Header: `Content-Type: application/json`
+- Body:
+
+  ```json
+  { "prompt": "Lisää ensi keskiviikolle illallinen helsingissä kello 17" }
+  ```
+
+- Expect: tool calls happen, and you get a final natural-language `answer` plus `toolCalls`.
+
+---
