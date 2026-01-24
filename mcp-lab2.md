@@ -69,3 +69,7 @@ req.body.prompt = transcription.text;
 
 // cleanup the file with fs.unlink
 ```
+
+### Send voice to the frontend
+
+Current frontend uses the builtin JS api to speak the responses. You can try to use OpenAI's TTS models via our proxy to generate more natural-sounding speech. Add that functionality to the `mcpClientController.ts` file.
