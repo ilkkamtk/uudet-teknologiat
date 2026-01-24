@@ -453,7 +453,11 @@ Manual Postman test:
 
 ## Code-it-yourself instructions
 
-Step-by-step instructions to implement the MCP client endpoint yourself.
+Step-by-step instructions to implement the MCP client endpoint yourself. The types used here are form the openai library, so you should install it as a dev dependency:
+
+```bash
+npm install --save-dev openai
+```
 
 ### 1) Add the route
 
