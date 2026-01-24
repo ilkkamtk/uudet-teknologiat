@@ -15,7 +15,9 @@
 ### MCP
 
 1. [MCP: Model Context Protocol](mcp.md)
-2. [MCP Labs](mcp-lab.md)
+2. MCP Labs
+   - [Part 1](mcp-lab.md)
+   - [Part 2](mcp-lab2.md)
 
 ---
 
