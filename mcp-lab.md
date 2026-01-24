@@ -388,16 +388,16 @@ Quick check: `npm run build` (this should catch most typing issues immediately).
 
 ---
 
-#### Prompt 5 — Add a strong system prompt for Finnish calendar commands (tool-first)
+#### Prompt 5 — Add a strong system prompt for calendar commands (tool-first)
 
 “Improve the `messages` setup in index.ts:
 
-- Add a detailed system message that makes the assistant behave like a Finnish calendar assistant.
+- Add a detailed system message that makes the assistant behave like a calendar assistant.
 - It must prefer using MCP tools for calendar actions:
   - If the user wants to list events → call `listEvents`.
   - If the user wants to create an event → call `createEvent`.
-- It must interpret Finnish phrases like ‘ensi keskiviikko’, ‘huomenna’, ‘kello 17’, and ‘Helsingissä’.
-- It must convert Europe/Helsinki local intent into UTC ISO 8601 strings for the `createEvent` tool inputs.
+- It must interpret phrases like ‘next wednesday’, ‘tomorrow’, ‘at 17’, and ‘in Helsinki’.
+- It must not do any calculations, only extract the relative intent.
 - Default event duration to 1 hour if end time isn’t given.
 - After tool calls, the assistant’s final answer must be based only on tool output (no pretending success).”
 
