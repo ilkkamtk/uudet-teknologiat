@@ -45,6 +45,7 @@ For local development you can run a minimal Radicale CalDAV server with no authe
    ```bash
    brew install pipx
    pipx ensurepath
+   pipx install radicale
    ```
 
 3. Create a local config + data folder
