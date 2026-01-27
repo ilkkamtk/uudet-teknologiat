@@ -40,7 +40,14 @@ For local development you can run a minimal Radicale CalDAV server with no authe
    python3 -m pip install --user radicale
    ```
 
-2. Create a local config + data folder
+   Or homebrew version:
+
+   ```bash
+   brew install pipx
+   pipx ensurepath
+   ```
+
+3. Create a local config + data folder
 
    ```bash
    mkdir -p radicale-data/collections
@@ -56,7 +63,7 @@ For local development you can run a minimal Radicale CalDAV server with no authe
    EOF
    ```
 
-3. Run Radicale
+4. Run Radicale
 
    ```bash
    radicale --config ./radicale.config
