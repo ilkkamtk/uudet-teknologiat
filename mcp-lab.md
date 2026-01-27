@@ -94,11 +94,17 @@ For local development you can run a minimal Radicale CalDAV server with no authe
    py -m radicale --config .\radicale.config
    ```
 
-4. Open `http://localhost:5232/` in your browser to see Radicale is running.
+   Or if config creation fails:
+
+   ```
+   py3 -m radicale --auth-type none
+   ```
+
+5. Open `http://localhost:5232/` in your browser to see Radicale is running.
    - Add a calendar with the + button
    - Subscribe to it in your calendar app (e.g., macOS Calendar, Thunderbird, etc.)
 
-5. Don't close the Radicale terminal, keep it running in the background.
+6. Don't close the Radicale terminal, keep it running in the background.
 
 ---
 
