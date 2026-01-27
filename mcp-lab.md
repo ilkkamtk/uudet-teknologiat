@@ -84,7 +84,11 @@ For local development you can run a minimal Radicale CalDAV server with no authe
 
    ```powershell
    New-Item -ItemType Directory -Force -Path .\radicale-data\collections | Out-Null
-   @'
+   ```
+
+   - create file `radicale.config`:
+
+   ```text
    [server]
    hosts = 127.0.0.1:5232
 
@@ -93,7 +97,6 @@ For local development you can run a minimal Radicale CalDAV server with no authe
 
    [storage]
    filesystem_folder = ./radicale-data/collections
-   '@ | Set-Content -Encoding UTF8 .\radicale.config
    ```
 
 3. Run Radicale
