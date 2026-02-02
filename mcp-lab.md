@@ -382,7 +382,7 @@ Quick check: start `npm run dev` and confirm `POST /api/v1/client` with `{}` ret
 
 “Create an MCP client module that can call our MCP server over Streamable HTTP.
 
-- Create index.ts.
+- Create src/mcp-client/index.ts.
 - Add a function that takes a user prompt string and returns `{ answer, toolCalls }`.
 - Read required env vars (`MCP_SERVER_URL`, `OPENAI_PROXY_URL`) and fail fast with clear errors when missing.
 - Connect to the MCP server using the MCP SDK Streamable HTTP client transport.
